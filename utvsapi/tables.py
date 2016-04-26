@@ -1,0 +1,93 @@
+from eve.utils import config
+from eve_sqlalchemy.decorators import registerSchema
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, DateTime
+
+
+Base = declarative_base()
+domain = {}
+config.ID_FIELD = config.ITEM_LOOKUP_FIELD = 'id'
+
+
+def register(cls):
+    '''Decorator that registers it and keeps track of it'''
+    clses = cls.__name__.lower() + 's'
+    registerSchema(clses)(cls)
+    domain[clses] = cls._eve_schema[clses]
+    domain[clses]['id_field'] = config.ID_FIELD  # or it will be _id anyway
+    return cls
+
+
+@register
+class Destination(Base):
+    __tablename__ = 'v_destination'
+
+    id = Column('id_destination', Integer, primary_key=True)
+    name = Column(String)
+    url = Column(String)
+
+
+@register
+class Hall(Base):
+    __tablename__ = 'v_hall'
+
+    id = Column('id_hall', Integer, primary_key=True)
+    name = Column(String)
+    url = Column(String)
+
+
+@register
+class Teacher(Base):
+    __tablename__ = 'v_lectors'
+
+    id = Column('id_lector', Integer, primary_key=True)
+    degrees_before = Column('title_before', String)
+    first_name = Column('name', String)
+    last_name = Column('surname', String)
+    degrees_after = Column('title_behind', String)
+    personal_number = Column('pers_number', String)
+    url = Column(String)
+
+
+@register
+class Sport(Base):
+    __tablename__ = 'v_sports'
+
+    id = Column('id_sport', Integer, primary_key=True)
+    shortcut = Column('short', String)
+    name = Column('sport', String)
+    description = Column(String)
+
+
+@register
+class Course(Base):
+    __tablename__ = 'v_subjects'
+
+    id = Column('id_subjects', Integer,
+                primary_key=True)
+    shortcut = Column(String)
+    day = Column(Integer)
+    starts_at = Column('begin', String)
+    ends_at = Column('end', String)
+    notice = Column(String)
+    semester = Column(Integer)
+    fk_sport = Column('sport', Integer,
+                      ForeignKey('v_sports.id_sport'))
+    fk_hall = Column('hall', Integer, ForeignKey('v_hall.id_hall'))
+    fk_teacher = Column('lector', Integer,
+                        ForeignKey('v_lectors.id_lector'))
+
+
+@register
+class Enrollment(Base):
+    __tablename__ = 'v_students'
+
+    id = Column('id_student', Integer, primary_key=True)
+    personal_number = Column(Integer)
+    kos_course_code = Column('kos_kod', String)
+    semester = Column(String)
+    registration_date = Column(DateTime)
+    tour = Column(Boolean)
+    kos_code_flag = Column('kos_code', Boolean)
+    fk_course = Column('utvs', Integer,
+                       ForeignKey('v_subjects.id_subjects'))
