@@ -14,7 +14,27 @@ def register(cls):
     clses = cls.__name__.lower() + 's'
     registerSchema(clses)(cls)
     domain[clses] = cls._eve_schema[clses]
-    domain[clses]['id_field'] = config.ID_FIELD  # or it will be _id anyway
+
+    # make sure id is our id_field
+    # I think this should happen automatically but it doesn't
+    domain[clses]['id_field'] = config.ID_FIELD
+
+    # make all ids of type objectid
+    # should not be necceassry, but feels good :)
+    domain[clses]['schema']['id']['type'] = 'objectid'
+
+    # change data_relation's schema a bit
+    for field, value in domain[clses]['schema'].items():
+        # is it a field with data_relation
+        if 'data_relation' in value:
+            # resource is the table name by default
+            # eve-sqlalchemy juts hopes it will be the same
+            # since we rename things, we need to rename it here as well
+            # fortunately, we are consistent and can construct it
+            value['data_relation']['resource'] = field + 's'
+            # make it embeddable, cannot enable it globally
+            value['data_relation']['embeddable'] = True
+
     return cls
 
 
@@ -71,11 +91,11 @@ class Course(Base):
     ends_at = Column('end', String)
     notice = Column(String)
     semester = Column(Integer)
-    fk_sport = Column('sport', Integer,
-                      ForeignKey('v_sports.id_sport'))
-    fk_hall = Column('hall', Integer, ForeignKey('v_hall.id_hall'))
-    fk_teacher = Column('lector', Integer,
-                        ForeignKey('v_lectors.id_lector'))
+    sport = Column('sport', Integer,
+                   ForeignKey('v_sports.id_sport'))
+    hall = Column('hall', Integer, ForeignKey('v_hall.id_hall'))
+    teacher = Column('lector', Integer,
+                     ForeignKey('v_lectors.id_lector'))
 
 
 @register
@@ -89,5 +109,5 @@ class Enrollment(Base):
     registration_date = Column(DateTime)
     tour = Column(Boolean)
     kos_code_flag = Column('kos_code', Boolean)
-    fk_course = Column('utvs', Integer,
-                       ForeignKey('v_subjects.id_subjects'))
+    course = Column('utvs', Integer,
+                    ForeignKey('v_subjects.id_subjects'))
