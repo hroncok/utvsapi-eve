@@ -13,20 +13,20 @@ config.ID_FIELD = config.ITEM_LOOKUP_FIELD = 'id'
 
 def register(cls):
     '''Decorator that registers it and keeps track of it'''
-    clses = cls.__name__.lower() + 's'
-    registerSchema(clses)(cls)
-    domain[clses] = cls._eve_schema[clses]
+    plural = cls.__name__.lower() + 's'
+    registerSchema(plural)(cls)
+    domain[plural] = cls._eve_schema[plural]
 
     # make sure id is our id_field
     # I think this should happen automatically but it doesn't
-    domain[clses]['id_field'] = config.ID_FIELD
+    domain[plural]['id_field'] = config.ID_FIELD
 
     # make all ids of type objectid
     # should not be necceassry, but feels good :)
-    domain[clses]['schema']['id']['type'] = 'objectid'
+    domain[plural]['schema']['id']['type'] = 'objectid'
 
     # change data_relation's schema a bit
-    for field, value in domain[clses]['schema'].items():
+    for field, value in domain[plural]['schema'].items():
         # is it a field with data_relation
         if 'data_relation' in value:
             # resource is the table name by default
@@ -38,15 +38,15 @@ def register(cls):
             value['data_relation']['embeddable'] = True
 
     if hasattr(cls, '__authentication__'):
-        domain[clses]['authentication'] = cls.__authentication__
+        domain[plural]['authentication'] = cls.__authentication__
 
     if hasattr(cls, '__auth_field__'):
-        domain[clses]['auth_field'] = cls.__auth_field__
+        domain[plural]['auth_field'] = cls.__auth_field__
 
     if hasattr(cls, '__additional_lookup__'):
-        domain[clses]['additional_lookup'] = cls.__additional_lookup__
+        domain[plural]['additional_lookup'] = cls.__additional_lookup__
 
-    classes[clses] = cls
+    classes[plural] = cls
     return cls
 
 
