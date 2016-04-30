@@ -54,17 +54,17 @@ def register(cls):
     return cls
 
 
-def make_links(resource, *args):
+def make_links(response, *args):
     for arg in args:
-        resource[config.LINKS][arg] = {
-            'href': '{}s/{}'.format(arg, resource[arg]),
+        response[config.LINKS][arg] = {
+            'href': '{}s/{}'.format(arg, response[arg]),
             'title': arg.title()
         }
 
 
-def make_ints(resource, *args):
+def make_ints(response, *args):
     for arg in args:
-        resource[arg] = int(resource[arg])
+        response[arg] = int(response[arg])
 
 
 @register
@@ -97,8 +97,8 @@ class Teacher(Base):
     personal_number = Column('pers_number', Integer)
     url = Column(String)
 
-    def __display_func__(resource):
-        make_ints(resource, 'personal_number')
+    def __display_func__(response):
+        make_ints(response, 'personal_number')
 
 
 @register
@@ -132,9 +132,9 @@ class Course(Base):
     teacher = Column('lector', Integer,
                      ForeignKey('v_lectors.id_lector'))
 
-    def __display_func__(resource):
-        make_ints(resource, 'day', 'hall', 'sport', 'teacher')
-        make_links(resource, 'hall', 'sport', 'teacher')
+    def __display_func__(response):
+        make_ints(response, 'day', 'hall', 'sport', 'teacher')
+        make_links(response, 'hall', 'sport', 'teacher')
 
 
 @register
@@ -153,19 +153,26 @@ class Enrollment(Base):
     course = Column('utvs', Integer,
                     ForeignKey('v_subjects.id_subjects'))
 
-    def __display_func__(resource):
-        if not resource['kos_code_flag']:
-            resource['kos_course_code'] = None
-        del resource['kos_code_flag']
-        make_links(resource, 'course')
+    def __display_func__(response):
+        if not response['kos_code_flag']:
+            response['kos_course_code'] = None
+        del response['kos_code_flag']
+        make_links(response, 'course')
+
+
+def remove_dates(response):
+    del response[config.LAST_UPDATED]
+    del response[config.DATE_CREATED]
 
 
 def on_fetched_item(resource, response):
+    remove_dates(response)
     if hasattr(classes[resource], '__display_func__'):
         return classes[resource].__display_func__(response)
 
 
 def on_fetched_resource(resource, response):
-    if hasattr(classes[resource], '__display_func__'):
-        for item in response['_items']:
+    for item in response['_items']:
+        remove_dates(item)
+        if hasattr(classes[resource], '__display_func__'):
             classes[resource].__display_func__(item)
