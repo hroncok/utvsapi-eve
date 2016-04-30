@@ -54,6 +54,14 @@ def register(cls):
     return cls
 
 
+def make_links(resource, *args):
+    for arg in args:
+        resource['_links'][arg] = {
+            'href': '{}s/{}'.format(arg, resource[arg]),
+            'title': arg
+        }
+
+
 @register
 class Destination(Base):
     __tablename__ = 'v_destination'
@@ -122,6 +130,7 @@ class Course(Base):
     def __display_func__(resource):
         for key in ('day', 'hall', 'sport', 'teacher'):
             resource[key] = int(resource[key])
+        make_links(resource, 'hall', 'sport', 'teacher')
 
 
 @register
@@ -144,6 +153,7 @@ class Enrollment(Base):
         if not resource['kos_code_flag']:
             resource['kos_course_code'] = None
         del resource['kos_code_flag']
+        make_links(resource, 'course')
 
 
 def on_fetched_item(resource, response):
