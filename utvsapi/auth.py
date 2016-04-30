@@ -1,5 +1,5 @@
 from eve.auth import BasicAuth
-from flask import request
+from flask import request, Response, abort
 from utvsapitoken import TokenClient
 
 
@@ -29,6 +29,11 @@ class BearerAuth(BasicAuth):
             return False
         return self.check_auth(token, resource, method)
 
+    def authenticate(self):
+        resp = Response(None, 401)
+        abort(401, description='Unauthorized. Please provide proper token.',
+              response=resp)
+
 
 class EnrollmentsAuth(BearerAuth):
     '''
@@ -53,3 +58,8 @@ class EnrollmentsAuth(BearerAuth):
         # only see your enrollments, pretty easy:
         self.set_request_auth_value(info['personal_number'])
         return True
+
+    def authenticate(self):
+        resp = Response(None, 403)
+        abort(403, description='Permission denied.',
+              response=resp)
