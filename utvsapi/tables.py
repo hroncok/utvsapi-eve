@@ -39,6 +39,9 @@ def register(cls):
     if hasattr(cls, '__authentication__'):
         domain[clses]['authentication'] = cls.__authentication__
 
+    if hasattr(cls, '__auth_field__'):
+        domain[clses]['auth_field'] = cls.__auth_field__
+
     if hasattr(cls, '__additional_lookup__'):
         domain[clses]['additional_lookup'] = cls.__additional_lookup__
 
@@ -112,6 +115,7 @@ class Course(Base):
 class Enrollment(Base):
     __tablename__ = 'v_students'
     __authentication__ = EnrollmentsAuth
+    __auth_field__ = 'personal_number'
 
     id = Column('id_student', Integer, primary_key=True)
     personal_number = Column(Integer)
