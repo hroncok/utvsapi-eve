@@ -172,7 +172,7 @@ def on_fetched_item(resource, response):
 
 
 def on_fetched_resource(resource, response):
-    for item in response['_items']:
+    for item in response[config.ITEMS]:
         remove_dates(item)
         if hasattr(classes[resource], '__display_func__'):
             classes[resource].__display_func__(item)
