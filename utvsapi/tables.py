@@ -5,6 +5,7 @@ from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, DateTime
 
 from utvsapi.auth import EnrollmentsAuth
 
+
 Base = declarative_base()
 domain = {}
 classes = {}
@@ -52,19 +53,6 @@ def register(cls):
 
     classes[plural] = cls
     return cls
-
-
-def make_links(response, *args):
-    for arg in args:
-        response[config.LINKS][arg] = {
-            'href': '{}s/{}'.format(arg, response[arg]),
-            'title': arg.title()
-        }
-
-
-def make_ints(response, *args):
-    for arg in args:
-        response[arg] = int(response[arg])
 
 
 @register
@@ -158,6 +146,19 @@ class Enrollment(Base):
             response['kos_course_code'] = None
         del response['kos_code_flag']
         make_links(response, 'course')
+
+
+def make_links(response, *args):
+    for arg in args:
+        response[config.LINKS][arg] = {
+            'href': '{}s/{}'.format(arg, response[arg]),
+            'title': arg.title()
+        }
+
+
+def make_ints(response, *args):
+    for arg in args:
+        response[arg] = int(response[arg])
 
 
 def remove_dates(response):
