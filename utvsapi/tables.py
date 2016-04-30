@@ -21,6 +21,10 @@ def register(cls):
     # I think this should happen automatically but it doesn't
     domain[plural]['id_field'] = config.ID_FIELD
 
+    domain[plural]['description'] = {'general': cls.__name__ + 's'}
+    if cls.__doc__:
+        domain[plural]['description'].update({'methods': {'GET': cls.__doc__}})
+
     # make all ids of type objectid
     # should not be necceassry, but feels good :)
     domain[plural]['schema']['id']['type'] = 'objectid'
@@ -89,7 +93,7 @@ class Sport(Base):
     __tablename__ = 'v_sports'
 
     id = Column('id_sport', Integer, primary_key=True)
-    shortcut = Column('short', String)
+    shortcut = Column('short', String, unique=True)
     name = Column('sport', String)
     description = Column(String)
 

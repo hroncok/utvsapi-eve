@@ -20,9 +20,9 @@ Install `eve`, `eve-sqlalchemy` and `mysqlclient` (you'll need mysql devel packa
     . venv/bin/activate
     pip install eve eve-sqlalchemy mysqlclient
 
-Optionally, you'd also need `eve-docs`, unfortunately the version on PyPI has a Python 3 incompatible print statement, which has been fixed in git, but not released yet.
+Optionally, for HTML documentation you also need `eve-docs`, unfortunately a forked version, not the one from PyPI.
 
-    pip install https://github.com/charlesflynn/eve-docs/archive/master.zip
+    pip install https://github.com/hermannsblum/eve-docs/archive/extended_documentation.zip
 
 Start the service in debug mode:
 

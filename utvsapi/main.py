@@ -19,7 +19,8 @@ SETTINGS = {
     'DEBUG': True,
     'SQLALCHEMY_DATABASE_URI': url,
     'SQLALCHEMY_TRACK_MODIFICATIONS': False,
-    'DOMAIN': domain
+    'DOMAIN': domain,
+    'API_NAME': 'UTVS API',
 }
 
 app = Eve(auth=BearerAuth, settings=SETTINGS, validator=ValidatorSQL, data=SQL)
