@@ -35,6 +35,9 @@ def register(cls):
             # make it embeddable, cannot enable it globally
             value['data_relation']['embeddable'] = True
 
+    if hasattr(cls, '__additional_lookup__'):
+        domain[clses]['additional_lookup'] = cls.__additional_lookup__
+
     return cls
 
 
@@ -77,6 +80,9 @@ class Sport(Base):
     shortcut = Column('short', String)
     name = Column('sport', String)
     description = Column(String)
+
+    __additional_lookup__ = {'url': 'regex("[\w]+")',
+                             'field': 'shortcut'}
 
 
 @register
