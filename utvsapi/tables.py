@@ -56,10 +56,15 @@ def register(cls):
 
 def make_links(resource, *args):
     for arg in args:
-        resource['_links'][arg] = {
+        resource[config.LINKS][arg] = {
             'href': '{}s/{}'.format(arg, resource[arg]),
-            'title': arg
+            'title': arg.title()
         }
+
+
+def make_ints(resource, *args):
+    for arg in args:
+        resource[arg] = int(resource[arg])
 
 
 @register
@@ -93,7 +98,7 @@ class Teacher(Base):
     url = Column(String)
 
     def __display_func__(resource):
-        resource['personal_number'] = int(resource['personal_number'])
+        make_ints(resource, 'personal_number')
 
 
 @register
@@ -128,8 +133,7 @@ class Course(Base):
                      ForeignKey('v_lectors.id_lector'))
 
     def __display_func__(resource):
-        for key in ('day', 'hall', 'sport', 'teacher'):
-            resource[key] = int(resource[key])
+        make_ints(resource, 'day', 'hall', 'sport', 'teacher')
         make_links(resource, 'hall', 'sport', 'teacher')
 
 
