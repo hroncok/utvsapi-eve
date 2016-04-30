@@ -114,9 +114,8 @@ class Course(Base):
     ends_at = Column('end', String)
     notice = Column(String)
     semester = Column(Integer)
-    sport = Column('sport', Integer,
-                   ForeignKey('v_sports.id_sport'))
-    hall = Column('hall', Integer, ForeignKey('v_hall.id_hall'))
+    sport = Column(Integer, ForeignKey('v_sports.id_sport'))
+    hall = Column(Integer, ForeignKey('v_hall.id_hall'))
     teacher = Column('lector', Integer,
                      ForeignKey('v_lectors.id_lector'))
 
