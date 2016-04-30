@@ -16,7 +16,6 @@ from utvsapi.auth import BearerAuth
 url = URL('mysql', query={'read_default_file': './mysql.cnf'})
 
 SETTINGS = {
-    'DEBUG': True,
     'SQLALCHEMY_DATABASE_URI': url,
     'SQLALCHEMY_TRACK_MODIFICATIONS': False,
     'DOMAIN': domain,
