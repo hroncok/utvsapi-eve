@@ -3,6 +3,7 @@ from eve_sqlalchemy.decorators import registerSchema
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, DateTime
 
+from utvsapi.auth import EnrollmentsAuth
 
 Base = declarative_base()
 domain = {}
@@ -34,6 +35,9 @@ def register(cls):
             value['data_relation']['resource'] = field + 's'
             # make it embeddable, cannot enable it globally
             value['data_relation']['embeddable'] = True
+
+    if hasattr(cls, '__authentication__'):
+        domain[clses]['authentication'] = cls.__authentication__
 
     if hasattr(cls, '__additional_lookup__'):
         domain[clses]['additional_lookup'] = cls.__additional_lookup__
@@ -107,6 +111,7 @@ class Course(Base):
 @register
 class Enrollment(Base):
     __tablename__ = 'v_students'
+    __authentication__ = EnrollmentsAuth
 
     id = Column('id_student', Integer, primary_key=True)
     personal_number = Column(Integer)

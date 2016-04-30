@@ -27,3 +27,11 @@ class BearerAuth(BasicAuth):
         except:
             return False
         return self.check_auth(token, allowed_roles, resource, method)
+
+
+class EnrollmentsAuth(BearerAuth):
+    '''
+    Overrides auth_logic for Enrollments
+    '''
+    def auth_logic(self, info, allowed_roles, resource, method):
+        return 'cvut:utvs:enrollments:all' in info['scope']
