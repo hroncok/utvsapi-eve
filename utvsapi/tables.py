@@ -65,7 +65,7 @@ class Teacher(Base):
     first_name = Column('name', String)
     last_name = Column('surname', String)
     degrees_after = Column('title_behind', String)
-    personal_number = Column('pers_number', String)
+    personal_number = Column('pers_number', Integer)
     url = Column(String)
 
 
