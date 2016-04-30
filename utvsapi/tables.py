@@ -7,6 +7,7 @@ from utvsapi.auth import EnrollmentsAuth
 
 Base = declarative_base()
 domain = {}
+classes = {}
 config.ID_FIELD = config.ITEM_LOOKUP_FIELD = 'id'
 
 
@@ -45,6 +46,7 @@ def register(cls):
     if hasattr(cls, '__additional_lookup__'):
         domain[clses]['additional_lookup'] = cls.__additional_lookup__
 
+    classes[clses] = cls
     return cls
 
 
@@ -78,6 +80,9 @@ class Teacher(Base):
     personal_number = Column('pers_number', Integer)
     url = Column(String)
 
+    def __display_func__(resource):
+        resource['personal_number'] = int(resource['personal_number'])
+
 
 @register
 class Sport(Base):
@@ -110,6 +115,10 @@ class Course(Base):
     teacher = Column('lector', Integer,
                      ForeignKey('v_lectors.id_lector'))
 
+    def __display_func__(resource):
+        for key in ('day', 'hall', 'sport', 'teacher'):
+            resource[key] = int(resource[key])
+
 
 @register
 class Enrollment(Base):
@@ -126,3 +135,19 @@ class Enrollment(Base):
     kos_code_flag = Column('kos_code', Boolean)
     course = Column('utvs', Integer,
                     ForeignKey('v_subjects.id_subjects'))
+
+    def __display_func__(resource):
+        if not resource['kos_code_flag']:
+            resource['kos_course_code'] = None
+        del resource['kos_code_flag']
+
+
+def on_fetched_item(resource, response):
+    if hasattr(classes[resource], '__display_func__'):
+        return classes[resource].__display_func__(response)
+
+
+def on_fetched_resource(resource, response):
+    if hasattr(classes[resource], '__display_func__'):
+        for item in response['_items']:
+            classes[resource].__display_func__(item)
