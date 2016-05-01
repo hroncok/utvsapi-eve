@@ -149,8 +149,13 @@ class Enrollment(Base):
 
 def make_links(response, *args):
     for arg in args:
+        if isinstance(response[arg], dict):
+            # embedded
+            id = response[arg]['id']
+        else:
+            id = response[arg]
         response[config.LINKS][arg] = {
-            'href': '{}s/{}'.format(arg, response[arg]),
+            'href': '{}s/{}'.format(arg, id),
             'title': arg.title()
         }
 
