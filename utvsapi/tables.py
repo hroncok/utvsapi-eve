@@ -162,7 +162,9 @@ def make_links(response, *args):
 
 def make_ints(response, *args):
     for arg in args:
-        response[arg] = int(response[arg])
+        if not isinstance(response[arg], dict):
+            # not embedded
+            response[arg] = int(response[arg])
 
 
 def remove_dates(response):
