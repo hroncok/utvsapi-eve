@@ -127,8 +127,6 @@ class Course(Base):
 @register
 class Enrollment(Base):
     __tablename__ = 'v_students'
-    __authentication__ = EnrollmentsAuth
-    __auth_field__ = 'personal_number'
 
     id = Column('id_student', Integer, primary_key=True)
     personal_number = Column(Integer)

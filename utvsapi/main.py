@@ -22,7 +22,7 @@ SETTINGS = {
     'API_NAME': 'UTVS API',
 }
 
-app = Eve(auth=BearerAuth, settings=SETTINGS, validator=ValidatorSQL, data=SQL)
+app = Eve(auth=None, settings=SETTINGS, validator=ValidatorSQL, data=SQL)
 app.on_fetched_item += on_fetched_item
 app.on_fetched_resource += on_fetched_resource
 
